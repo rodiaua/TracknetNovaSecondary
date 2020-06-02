@@ -19,21 +19,35 @@ namespace Tree.Controllers
       _meterLocationTreeService = meterLocationTreeService;
     }
 
+    /// <summary>
+    ///Retreives all nodes ordered by id (https://{address}:{port}/api/meterlocationtree/getall/).
+    /// </summary>
     [HttpGet("[action]")]
     public IEnumerable<MeterLocationTree> GetAll()
     {
       return _meterLocationTreeService.GetAll();
     }
 
+    /// <summary>
+    ///Deletes all nodes(https://{address}:{port}/api/meterlocationtree/deleteall/).
+    /// </summary>
     [HttpPost("[action]")]
-
     public async Task DeleteAll()
     {
       await _meterLocationTreeService.DeleteAll();
     }
 
+    /// <summary>
+    ///Creates a node(https://{address}:{port}/api/meterlocationtree/createnode/).
+    ///{	
+    ///"LocationElement":"",
+    ///"Path": []
+    ///}
+    ///LocationElement - string, name of the node
+    ///Path - int[], contains parent path, leave array empty if it's root node.
+    /// </summary>
     [HttpPost("[action]")]
-    public async Task CreateElement([FromBody] MeterLocationTree meterLocationTree)
+    public async Task CreateNode([FromBody] MeterLocationTree meterLocationTree)
     {
       if (meterLocationTree != null)
       {
@@ -41,16 +55,23 @@ namespace Tree.Controllers
       }
     }
 
+    /// <summary>
+    ///Delete a node and its children(https://localhost:44368/api/meterlocationtree/deletenode/{id})
+    /// </summary>
     [HttpPost("[action]/{id}")]
     public async Task DeleteNode(int id)
     {
       if (id != 0) { await _meterLocationTreeService.DeleteNode(id); }
     }
 
+    /// <summary>
+    ///Upadtes(https://localhost:44368/api/meterlocationtree/updatenode/{nodeId}/{parenNodeId})
+    ///
+    /// </summary>
     [HttpPut("[action]/{childId}/{parentId?}")]
     public async Task UpdateNode(int? parentId, int childId, [FromBody]string locationElement)
     {
-      await _meterLocationTreeService.UpdateNode(parentId, new MeterLocationTree() { Id = childId, LocationElement = locationElement}) ;
+      await _meterLocationTreeService.UpdateNode(parentId, new MeterLocationTree() { Id = childId, LocationElement = locationElement });
     }
 
     [HttpGet("[action]/{id}")]
