@@ -56,7 +56,7 @@ namespace Tree.Controllers
     }
 
     /// <summary>
-    ///Delete a node and its children(https://localhost:44368/api/meterlocationtree/deletenode/{id})
+    ///Delete a node and its children(https://{address}:{port}/api/meterlocationtree/deletenode/{id})
     /// </summary>
     [HttpPost("[action]/{id}")]
     public async Task DeleteNode(int id)
@@ -65,8 +65,11 @@ namespace Tree.Controllers
     }
 
     /// <summary>
-    ///Upadtes(https://localhost:44368/api/meterlocationtree/updatenode/{nodeId}/{parenNodeId})
-    ///
+    ///Upadtes a node(https://{address}:{port}/api/meterlocationtree/updatenode/{nodeId}/{parenNodeId})
+    ///Body: "{name}"
+    ///name - optional string value that changes a node name.
+    ///parenNodeId - optional int parameter of the parent node that is the node where a child node is moving to while updating.
+    ///When a node is moving to another node its children moving along with it.
     /// </summary>
     [HttpPut("[action]/{childId}/{parentId?}")]
     public async Task UpdateNode(int? parentId, int childId, [FromBody]string locationElement)
@@ -74,24 +77,29 @@ namespace Tree.Controllers
       await _meterLocationTreeService.UpdateNode(parentId, new MeterLocationTree() { Id = childId, LocationElement = locationElement });
     }
 
+    /// <summary>
+    ///Retreives all child nodes (https://{address}:{port}/api/meterlocationtree/getallchildelemnets/{nodeId}).
+    /// </summary>
     [HttpGet("[action]/{id}")]
-    public IEnumerable<MeterLocationTree> GetAllChildElemnets(int id)
+    public IEnumerable<MeterLocationTree> GetAllChildNodes(int id)
     {
       return _meterLocationTreeService.GetAllChildElemnets(id);
     }
 
+    /// <summary>
+    ///Retreives closest child nodes (https://{address}:{port}/api/meterlocationtree/getfirstciclechildelemnets/{nodeId}).
+    /// </summary>
     [HttpGet("[action]/{id}")]
-    public IEnumerable<MeterLocationTree> GetFirstCicleChildElemnets(int id)
+    public IEnumerable<MeterLocationTree> GetFirstCicleChildNodes(int id)
     {
       return _meterLocationTreeService.GetFirstCicleChildElemnets(id);
     }
 
-    [HttpPost("[action]/{count}")]
-    public async Task<string> CreateNode(int count)
-    {
-      return await _meterLocationTreeService.CreateNode(count);
-    }
-
+    /// <summary>
+    ///Performs a search by substring and retrieves the nodes, firstly those which starts with the substring then those which contains the substring
+    ///(https://{address}:{port}/api/meterlocationtree/search/).
+    ///Body: "{substring}"
+    /// </summary>
     [HttpPost("[action]")]
     public IEnumerable<MeterLocationTree> Search([FromBody]string substring)
     {
@@ -102,5 +110,18 @@ namespace Tree.Controllers
       return null;
     }
 
+
+    //Create recordes for tests (https://{address}:{port}/api/meterlocationtree/createnode/{count}).
+    //count - amount of city
+    //each city containt 2 streets
+    //each street contains 2 houses
+    //each houses containt 2 meters
+    [HttpPost("[action]/{count}")]
+    public async Task<string> CreateNode(int count)
+    {
+      return await _meterLocationTreeService.CreateNode(count);
+    }
+
+    
   }
 }
