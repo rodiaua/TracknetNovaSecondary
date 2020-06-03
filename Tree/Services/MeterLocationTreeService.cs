@@ -20,14 +20,14 @@ namespace Tree.Services
       _dbContext = dbContext;
     }
 
-    public IEnumerable<MeterLocationTree> GetAll()
+    public async Task<IEnumerable<MeterLocationTree>> GetAll()
     {
-      return _dbContext.MeterLocationTree.OrderBy(m => m.Id).ToList();
+      return await _dbContext.MeterLocationTree.OrderBy(m => m.Id).ToListAsync();
     }
 
     public async Task DeleteAll()
     {
-      _dbContext.MeterLocationTree.RemoveRange(GetAll());
+      _dbContext.MeterLocationTree.RemoveRange(await GetAll());
       await _dbContext.SaveChangesAsync();
     }
 
@@ -94,7 +94,7 @@ namespace Tree.Services
     public IEnumerable<MeterLocationTree> GetAllChildElemnets(int parentId)
     {
       var parentElemnet = _dbContext.MeterLocationTree.Find(parentId);
-      return _dbContext.MeterLocationTree.AsEnumerable().Where(p => p.Path.IsChildOf(parentElemnet.Path)) .ToList();
+      return _dbContext.MeterLocationTree.AsEnumerable().Where(p => p.Path.IsChildOf(parentElemnet.Path)).ToList();
     }
 
     public IEnumerable<MeterLocationTree> GetFirstCicleChildElemnets(int parentId)
@@ -150,10 +150,10 @@ namespace Tree.Services
       return finishTime.Subtract(startTime).ToString();
     }
 
-    public IEnumerable<MeterLocationTree> SearchBySubstring(string substring)
+    public async Task<IEnumerable<MeterLocationTree>> SearchBySubstring(string substring)
     {
-      var elementThatStarts = _dbContext.MeterLocationTree.Where(p => p.LocationElement.ToLower().StartsWith(substring.ToLower())).ToList();
-      var elementThatContains = _dbContext.MeterLocationTree.Where(p => p.LocationElement.ToLower().Contains(substring.ToLower()) && !p.LocationElement.ToLower().StartsWith(substring.ToLower())).ToList();
+      var elementThatStarts = await _dbContext.MeterLocationTree.Where(p => p.LocationElement.ToLower().StartsWith(substring.ToLower())).ToListAsync();
+      var elementThatContains = await _dbContext.MeterLocationTree.Where(p => p.LocationElement.ToLower().Contains(substring.ToLower()) && !p.LocationElement.ToLower().StartsWith(substring.ToLower())).ToListAsync();
       elementThatStarts.AddRange(elementThatContains);
       return elementThatStarts;
     }

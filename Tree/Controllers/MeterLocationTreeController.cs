@@ -23,9 +23,9 @@ namespace Tree.Controllers
     ///Retreives all nodes ordered by id (https://{address}:{port}/api/meterlocationtree/getall/).
     /// </summary>
     [HttpGet("[action]")]
-    public IEnumerable<MeterLocationTree> GetAll()
+    public async Task<IEnumerable<MeterLocationTree>> GetAll()
     {
-      return _meterLocationTreeService.GetAll();
+      return await _meterLocationTreeService.GetAll();
     }
 
     /// <summary>
@@ -101,11 +101,11 @@ namespace Tree.Controllers
     ///Body: "{substring}"
     /// </summary>
     [HttpPost("[action]")]
-    public IEnumerable<MeterLocationTree> Search([FromBody]string substring)
+    public async Task<IEnumerable<MeterLocationTree>> Search([FromBody]string substring)
     {
       if (!string.IsNullOrEmpty(substring))
       {
-        return _meterLocationTreeService.SearchBySubstring(substring);
+        return await _meterLocationTreeService.SearchBySubstring(substring);
       }
       return null;
     }
