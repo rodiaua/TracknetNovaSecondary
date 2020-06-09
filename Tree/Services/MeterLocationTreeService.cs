@@ -25,6 +25,11 @@ namespace Tree.Services
       return await _dbContext.MeterLocationTree.OrderBy(m => m.Id).ToListAsync();
     }
 
+    public async Task<IEnumerable<MeterLocationTree>> GetAllRootNodes()
+    {
+      return await _dbContext.MeterLocationTree.OrderBy(m => m.Id).Where(p => p.Path.Length == 1).ToListAsync();
+    }
+
     public async Task DeleteAll()
     {
       _dbContext.MeterLocationTree.RemoveRange(await GetAll());

@@ -29,6 +29,15 @@ namespace Tree.Controllers
     }
 
     /// <summary>
+    ///Retreives all nodes which do not have parent nodes ordered by id (https://{address}:{port}/api/meterlocationtree/getallrootnodes/).
+    /// </summary>
+    [HttpGet("[action]")]
+    public async Task<IEnumerable<MeterLocationTree>> GetAllRootNodes()
+    {
+      return await _meterLocationTreeService.GetAllRootNodes();
+    }
+
+    /// <summary>
     ///Deletes all nodes(https://{address}:{port}/api/meterlocationtree/deleteall/).
     /// </summary>
     [HttpPost("[action]")]
