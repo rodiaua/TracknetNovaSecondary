@@ -78,7 +78,9 @@ namespace Tree.Controllers
     ///Body: "{name}"
     ///name - optional string value that changes a node name.
     ///parenNodeId - optional int parameter of the parent node that is the node where a child node is moving to while updating.
+    ///(Set parenNodeId = 0 if you wnat to make updated node root node.)
     ///When a node is moving to another node its children moving along with it.
+    ///THROWS an EXSEPTION if parent node is moving to its child node.
     /// </summary>
     [HttpPut("[action]/{childId}/{parentId?}")]
     public async Task UpdateNode(int? parentId, int childId, [FromBody]string locationElement)

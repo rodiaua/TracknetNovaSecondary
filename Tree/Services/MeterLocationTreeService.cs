@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -67,20 +68,23 @@ namespace Tree.Services
         if (parentId != null)
         {
           var parentNode = _dbContext.MeterLocationTree.Find(parentId);
-          if (parentNode != null)
+          if (parentNode.Path.IsChildOf(childNode.Path)) throw new Exception("Parent node cannot be moved to its child node!");
+          else if (parentNode != null || parentId==0)
           {
-            var path = parentNode.Path.ToList();
+            List<int> path = null;
+            if (parentId == 0) path = new List<int>();
+            else path = parentNode.Path.ToList();
             path.Add(meterLocationTree.Id);
-            var childList = _dbContext.MeterLocationTree.AsEnumerable().Where(p => p.Path.IsChildOf(childNode.Path));
+            var childList = _dbContext.MeterLocationTree.AsEnumerable().Where(p => p.Path.IsChildOf(childNode.Path)).ToList();
             if (childList != null)
             {
               foreach (var child in childList)
-              {
+              {    
                 var pathForChild = new List<int>();
                 pathForChild.AddRange(path);
-                pathForChild.Add(meterLocationTree.Id);
-                Array.Copy(child.Path, childNode.Path.Length - 1, pathForChild.ToArray(), path.ToArray().Length, child.Path.Length - childNode.Path.Length - 1);
-                child.Path = (int[])pathForChild.ToArray().Clone();
+                int indexOfId = child.Path.ToList().IndexOf(child.Id);
+                var temp = child.Path.ToList().GetRange(indexOfId, child.Path.Length - indexOfId);
+                child.Path = pathForChild.Concat(temp).ToArray();
                 _dbContext.MeterLocationTree.Update(child);
               }
             }
